@@ -288,6 +288,11 @@ export default function Home() {
       };
 
       utterance.onerror = (event) => {
+        // Ignore "interrupted" errors - these happen when we manually cancel speech
+        // (e.g., when clicking forward, previous, or stop buttons)
+        if (event.error === "interrupted" || event.error === "canceled") {
+          return;
+        }
         console.error("Speech error:", event);
         setError("Die Sprachausgabe wurde unterbrochen.");
         setPlayerState("idle");
