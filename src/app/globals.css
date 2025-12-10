@@ -312,3 +312,42 @@ body {
 .skip-link:focus {
   top: 16px;
 }
+
+/* Live/Demo Badges */
+.live-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  background: var(--success);
+  color: white;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.live-badge::before {
+  content: "\25CF";
+  margin-right: 8px;
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.demo-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  background: var(--accent);
+  color: white;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.demo-badge::before {
+  content: "\25CB";
+  margin-right: 8px;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

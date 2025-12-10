@@ -2,18 +2,24 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 
-// Deutsche Städte für lokale Nachrichten
+// Alle 16 Bundesländer mit Landeshauptstädten
 const STAEDTE = [
-  { id: "berlin", name: "Berlin" },
-  { id: "hamburg", name: "Hamburg" },
-  { id: "muenchen", name: "München" },
-  { id: "koeln", name: "Köln" },
-  { id: "frankfurt", name: "Frankfurt" },
-  { id: "stuttgart", name: "Stuttgart" },
-  { id: "duesseldorf", name: "Düsseldorf" },
-  { id: "leipzig", name: "Leipzig" },
-  { id: "dortmund", name: "Dortmund" },
-  { id: "dresden", name: "Dresden" },
+  { id: "stuttgart", name: "Stuttgart", state: "Baden-Württemberg" },
+  { id: "muenchen", name: "München", state: "Bayern" },
+  { id: "berlin", name: "Berlin", state: "Berlin" },
+  { id: "potsdam", name: "Potsdam", state: "Brandenburg" },
+  { id: "bremen", name: "Bremen", state: "Bremen" },
+  { id: "hamburg", name: "Hamburg", state: "Hamburg" },
+  { id: "wiesbaden", name: "Wiesbaden", state: "Hessen" },
+  { id: "schwerin", name: "Schwerin", state: "Mecklenburg-Vorpommern" },
+  { id: "hannover", name: "Hannover", state: "Niedersachsen" },
+  { id: "duesseldorf", name: "Düsseldorf", state: "Nordrhein-Westfalen" },
+  { id: "mainz", name: "Mainz", state: "Rheinland-Pfalz" },
+  { id: "saarbruecken", name: "Saarbrücken", state: "Saarland" },
+  { id: "dresden", name: "Dresden", state: "Sachsen" },
+  { id: "magdeburg", name: "Magdeburg", state: "Sachsen-Anhalt" },
+  { id: "kiel", name: "Kiel", state: "Schleswig-Holstein" },
+  { id: "erfurt", name: "Erfurt", state: "Thüringen" },
 ];
 
 interface NewsItem {
@@ -46,86 +52,128 @@ const DEMO_NACHRICHTEN: NewsItem[] = [
   },
 ];
 
-// Lokale Nachrichten pro Stadt
+// Lokale Nachrichten pro Landeshauptstadt
 const LOKALE_NACHRICHTEN: Record<string, { headline: string; summary: string }> =
   {
-    berlin: {
-      headline: "Neuer Spielplatz im Volkspark eröffnet",
+    stuttgart: {
+      headline: "Neuer Seniorentreff im Stadtteil eröffnet",
       summary:
-        "Die Stadt hat einen barrierefreien Spielplatz eingeweiht, der Kindern und Großeltern gemeinsames Spielen ermöglicht.",
-    },
-    hamburg: {
-      headline: "Ehrenamtliche Helfer räumen Elbstrand auf",
-      summary:
-        "Über zweihundert Freiwillige haben am Wochenende den Strand gereinigt. Die Aktion wird von vielen Bürgern gelobt.",
+        "Der gemütliche Treffpunkt bietet Kaffee, Kuchen und Gesellschaft für alle, die Gesellschaft suchen.",
     },
     muenchen: {
       headline: "Münchner Bäckerei verschenkt Brot an Bedürftige",
       summary:
         "Eine traditionelle Bäckerei in Schwabing gibt täglich Brot an Menschen weiter, die wenig Geld haben.",
     },
-    koeln: {
-      headline: "Kölner Dom erhält neue Glocken",
+    berlin: {
+      headline: "Neuer Spielplatz im Volkspark eröffnet",
       summary:
-        "Nach aufwendiger Restaurierung läuten die historischen Glocken wieder in voller Pracht.",
+        "Die Stadt hat einen barrierefreien Spielplatz eingeweiht, der Kindern und Großeltern gemeinsames Spielen ermöglicht.",
     },
-    frankfurt: {
-      headline: "Stadtbibliothek startet Vorlesestunden für Senioren",
+    potsdam: {
+      headline: "Schloss Sanssouci begeistert Besucher",
       summary:
-        "Jeden Donnerstag lesen junge Freiwillige älteren Menschen aus Büchern vor. Das Angebot ist kostenlos.",
+        "Das historische Schloss zieht wieder viele Gäste an. Die Parkanlage lädt zu gemütlichen Spaziergängen ein.",
     },
-    stuttgart: {
-      headline: "Neuer Seniorentreff im Stadtteil eröffnet",
+    bremen: {
+      headline: "Bremer Stadtmusikanten bekommen neuen Anstrich",
       summary:
-        "Der gemütliche Treffpunkt bietet Kaffee, Kuchen und Gesellschaft für alle, die Gesellschaft suchen.",
+        "Die berühmte Bronzestatue wurde gereinigt und erstrahlt in neuem Glanz. Ein beliebtes Fotomotiv für Touristen.",
+    },
+    hamburg: {
+      headline: "Ehrenamtliche Helfer räumen Elbstrand auf",
+      summary:
+        "Über zweihundert Freiwillige haben am Wochenende den Strand gereinigt. Die Aktion wird von vielen Bürgern gelobt.",
+    },
+    wiesbaden: {
+      headline: "Kurpark lädt zu Frühlingskonzerten ein",
+      summary:
+        "Im historischen Kurpark finden wieder kostenlose Konzerte statt. Die Veranstaltungen sind für alle Altersgruppen geeignet.",
+    },
+    schwerin: {
+      headline: "Schweriner Schloss öffnet neue Ausstellung",
+      summary:
+        "Das Märchenschloss zeigt historische Gemälde aus drei Jahrhunderten. Der Eintritt ist für Senioren ermäßigt.",
+    },
+    hannover: {
+      headline: "Herrenhäuser Gärten laden zum Verweilen ein",
+      summary:
+        "Die barocken Gärten bieten Ruhe und Erholung. Neue Sitzbänke wurden im Schatten aufgestellt.",
     },
     duesseldorf: {
       headline: "Nachbarschaftshilfe verbindet Jung und Alt",
       summary:
         "Ein neues Projekt bringt Schüler und Senioren zusammen. Sie helfen sich gegenseitig im Alltag.",
     },
-    leipzig: {
-      headline: "Historischer Marktplatz erstrahlt in neuem Glanz",
+    mainz: {
+      headline: "Gutenberg-Museum zeigt seltene Drucke",
       summary:
-        "Nach der Renovierung lädt der Platz wieder zum Verweilen ein. Neue Bänke wurden aufgestellt.",
+        "Das Museum präsentiert wertvolle historische Bücher. Führungen werden auch in einfacher Sprache angeboten.",
     },
-    dortmund: {
-      headline: "Tierpark freut sich über Nachwuchs",
+    saarbruecken: {
+      headline: "Deutsch-Französischer Garten blüht auf",
       summary:
-        "Im städtischen Zoo sind zwei Rehkitze geboren worden. Besucher können sie ab nächster Woche sehen.",
+        "Der grenzüberschreitende Park zeigt sich in voller Blütenpracht. Ein Ort der Begegnung für Jung und Alt.",
     },
     dresden: {
       headline: "Elbe-Radweg wird ausgebaut",
       summary:
         "Der beliebte Radweg bekommt neue Rastplätze mit Bänken und Trinkwasserbrunnen.",
     },
+    magdeburg: {
+      headline: "Elbauenpark startet Seniorenprogramm",
+      summary:
+        "Der Park bietet neue Bewegungskurse für ältere Menschen an. Die Teilnahme ist kostenlos.",
+    },
+    kiel: {
+      headline: "Kieler Förde lädt zum Flanieren ein",
+      summary:
+        "Die neue Uferpromenade bietet einen schönen Blick auf die Schiffe. Viele Bänke laden zum Ausruhen ein.",
+    },
+    erfurt: {
+      headline: "Krämerbrücke feiert Jubiläum",
+      summary:
+        "Die älteste bebaute Brücke Deutschlands begeht ihr Stadtfest. Handwerker zeigen traditionelles Kunsthandwerk.",
+    },
   };
 
 // Wetter-Daten
 const WETTER_DATEN: Record<string, { temp: string; beschreibung: string }> = {
-  berlin: { temp: "7", beschreibung: "bewölkt mit gelegentlichen Aufhellungen" },
-  hamburg: { temp: "9", beschreibung: "leichter Regen" },
-  muenchen: { temp: "4", beschreibung: "sonnig aber kühl" },
-  koeln: { temp: "10", beschreibung: "bedeckt" },
-  frankfurt: { temp: "8", beschreibung: "neblig am Morgen, später freundlich" },
   stuttgart: { temp: "6", beschreibung: "wechselhaft" },
+  muenchen: { temp: "4", beschreibung: "sonnig aber kühl" },
+  berlin: { temp: "7", beschreibung: "bewölkt mit gelegentlichen Aufhellungen" },
+  potsdam: { temp: "7", beschreibung: "leicht bewölkt" },
+  bremen: { temp: "8", beschreibung: "windig mit Schauern" },
+  hamburg: { temp: "9", beschreibung: "leichter Regen" },
+  wiesbaden: { temp: "9", beschreibung: "mild und freundlich" },
+  schwerin: { temp: "6", beschreibung: "wechselhaft" },
+  hannover: { temp: "7", beschreibung: "bedeckt" },
   duesseldorf: { temp: "9", beschreibung: "leicht bewölkt" },
-  leipzig: { temp: "5", beschreibung: "trocken und kühl" },
-  dortmund: { temp: "8", beschreibung: "bedeckt" },
+  mainz: { temp: "10", beschreibung: "sonnig" },
+  saarbruecken: { temp: "8", beschreibung: "teilweise bewölkt" },
   dresden: { temp: "4", beschreibung: "sonnig" },
+  magdeburg: { temp: "5", beschreibung: "trocken und kühl" },
+  kiel: { temp: "7", beschreibung: "frisch mit Böen" },
+  erfurt: { temp: "5", beschreibung: "neblig am Morgen" },
 };
 
 const CITY_NAMES: Record<string, string> = {
-  berlin: "Berlin",
-  hamburg: "Hamburg",
-  muenchen: "München",
-  koeln: "Köln",
-  frankfurt: "Frankfurt",
   stuttgart: "Stuttgart",
+  muenchen: "München",
+  berlin: "Berlin",
+  potsdam: "Potsdam",
+  bremen: "Bremen",
+  hamburg: "Hamburg",
+  wiesbaden: "Wiesbaden",
+  schwerin: "Schwerin",
+  hannover: "Hannover",
   duesseldorf: "Düsseldorf",
-  leipzig: "Leipzig",
-  dortmund: "Dortmund",
+  mainz: "Mainz",
+  saarbruecken: "Saarbrücken",
   dresden: "Dresden",
+  magdeburg: "Magdeburg",
+  kiel: "Kiel",
+  erfurt: "Erfurt",
 };
 
 // Generiere Demo-Nachrichten für eine Stadt
@@ -155,6 +203,7 @@ export default function Home() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [isLive, setIsLive] = useState<boolean | null>(null);
 
   const speechSynthRef = useRef<SpeechSynthesisUtterance | null>(null);
   const voicesLoadedRef = useRef(false);
@@ -255,6 +304,7 @@ export default function Home() {
     setError(null);
     setPlayerState("loading");
     setCurrentNewsIndex(0);
+    setIsLive(null);
 
     try {
       // Versuche zuerst die API zu erreichen
@@ -265,6 +315,7 @@ export default function Home() {
 
       const data = await response.json();
       setNews(data.news);
+      setIsLive(data.isLive ?? false);
       setPlayerState("playing");
       speakNews(data.news[0], 0, data.news);
     } catch {
@@ -272,6 +323,7 @@ export default function Home() {
       console.log("API nicht verfügbar, verwende Demo-Daten");
       const demoNews = getDemoNews(selectedCity);
       setNews(demoNews);
+      setIsLive(false);
       setPlayerState("playing");
       speakNews(demoNews[0], 0, demoNews);
     }
@@ -382,7 +434,7 @@ export default function Home() {
             >
               {STAEDTE.map((stadt) => (
                 <option key={stadt.id} value={stadt.id}>
-                  {stadt.name}
+                  {stadt.name} ({stadt.state})
                 </option>
               ))}
             </select>
@@ -462,6 +514,15 @@ export default function Home() {
             gap: "32px",
           }}
         >
+          {/* Live/Demo Badge */}
+          {isLive !== null && (
+            <div style={{ textAlign: "center" }}>
+              <span className={isLive ? "live-badge" : "demo-badge"}>
+                {isLive ? "Live" : "Demo"}
+              </span>
+            </div>
+          )}
+
           {/* Aktuelle Nachricht */}
           {news[currentNewsIndex] && (
             <article className="news-card" aria-live="polite">
