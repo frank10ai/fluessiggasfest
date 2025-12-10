@@ -136,12 +136,12 @@ function getDemoNews(city: string): NewsItem[] {
   const weather = DEMO_WEATHER[city] || DEMO_WEATHER.berlin;
 
   return [
-    ...DEMO_NEWS,
     {
       headline: local.headline,
       summary: local.summary,
       type: "lokal",
     },
+    ...DEMO_NEWS,
     {
       headline: `Das Wetter in ${cityName}`,
       summary: `Heute erwarten wir ${weather.beschreibung}. Die Temperaturen liegen bei ${weather.temp} Grad. Denken Sie an warme Kleidung, wenn Sie das Haus verlassen.`,
@@ -175,6 +175,21 @@ export async function GET(
     const rawItems: RawNewsItem[] = [];
     let isLive = true;
 
+    // Process regional news first (local news takes priority)
+    if (regionalNewsResult.status === "fulfilled" && regionalNewsResult.value) {
+      rawItems.push(regionalNewsResult.value);
+    } else {
+      console.error("Regional news fetch failed or empty");
+      const local = DEMO_LOCAL[city] || DEMO_LOCAL.berlin;
+      rawItems.push({
+        headline: local.headline,
+        summary: local.summary,
+        type: "lokal",
+        originalTitle: local.headline,
+        originalSummary: local.summary,
+      });
+    }
+
     // Process world news
     if (worldNewsResult.status === "fulfilled") {
       rawItems.push(...worldNewsResult.value);
@@ -189,21 +204,6 @@ export async function GET(
           originalSummary: n.summary,
         }))
       );
-    }
-
-    // Process regional news
-    if (regionalNewsResult.status === "fulfilled" && regionalNewsResult.value) {
-      rawItems.push(regionalNewsResult.value);
-    } else {
-      console.error("Regional news fetch failed or empty");
-      const local = DEMO_LOCAL[city] || DEMO_LOCAL.berlin;
-      rawItems.push({
-        headline: local.headline,
-        summary: local.summary,
-        type: "lokal",
-        originalTitle: local.headline,
-        originalSummary: local.summary,
-      });
     }
 
     // Process weather
