@@ -4,22 +4,22 @@ import { useState, useRef, useEffect, useCallback } from "react";
 
 // Alle 16 Bundesländer mit Landeshauptstädten
 const STAEDTE = [
-  { id: "stuttgart", name: "Stuttgart", state: "Baden-Württemberg" },
-  { id: "muenchen", name: "München", state: "Bayern" },
-  { id: "berlin", name: "Berlin", state: "Berlin" },
-  { id: "potsdam", name: "Potsdam", state: "Brandenburg" },
-  { id: "bremen", name: "Bremen", state: "Bremen" },
-  { id: "hamburg", name: "Hamburg", state: "Hamburg" },
-  { id: "wiesbaden", name: "Wiesbaden", state: "Hessen" },
-  { id: "schwerin", name: "Schwerin", state: "Mecklenburg-Vorpommern" },
-  { id: "hannover", name: "Hannover", state: "Niedersachsen" },
-  { id: "duesseldorf", name: "Düsseldorf", state: "Nordrhein-Westfalen" },
-  { id: "mainz", name: "Mainz", state: "Rheinland-Pfalz" },
-  { id: "saarbruecken", name: "Saarbrücken", state: "Saarland" },
-  { id: "dresden", name: "Dresden", state: "Sachsen" },
-  { id: "magdeburg", name: "Magdeburg", state: "Sachsen-Anhalt" },
-  { id: "kiel", name: "Kiel", state: "Schleswig-Holstein" },
-  { id: "erfurt", name: "Erfurt", state: "Thüringen" },
+  { id: "stuttgart", name: "Stuttgart", state: "Baden-Württemberg", emblem: "baden-wuerttemberg" },
+  { id: "muenchen", name: "München", state: "Bayern", emblem: "bayern" },
+  { id: "berlin", name: "Berlin", state: "Berlin", emblem: "berlin" },
+  { id: "potsdam", name: "Potsdam", state: "Brandenburg", emblem: "brandenburg" },
+  { id: "bremen", name: "Bremen", state: "Bremen", emblem: "bremen" },
+  { id: "hamburg", name: "Hamburg", state: "Hamburg", emblem: "hamburg" },
+  { id: "wiesbaden", name: "Wiesbaden", state: "Hessen", emblem: "hessen" },
+  { id: "schwerin", name: "Schwerin", state: "Mecklenburg-Vorpommern", emblem: "mecklenburg-vorpommern" },
+  { id: "hannover", name: "Hannover", state: "Niedersachsen", emblem: "niedersachsen" },
+  { id: "duesseldorf", name: "Düsseldorf", state: "Nordrhein-Westfalen", emblem: "nordrhein-westfalen" },
+  { id: "mainz", name: "Mainz", state: "Rheinland-Pfalz", emblem: "rheinland-pfalz" },
+  { id: "saarbruecken", name: "Saarbrücken", state: "Saarland", emblem: "saarland" },
+  { id: "dresden", name: "Dresden", state: "Sachsen", emblem: "sachsen" },
+  { id: "magdeburg", name: "Magdeburg", state: "Sachsen-Anhalt", emblem: "sachsen-anhalt" },
+  { id: "kiel", name: "Kiel", state: "Schleswig-Holstein", emblem: "schleswig-holstein" },
+  { id: "erfurt", name: "Erfurt", state: "Thüringen", emblem: "thueringen" },
 ];
 
 interface NewsItem {
@@ -446,6 +446,7 @@ export default function Home() {
                   aria-pressed={selectedCity === stadt.id}
                   style={{
                     width: "160px",
+                    height: "100px",
                     padding: "16px 12px",
                     fontSize: "18px",
                     border:
@@ -459,11 +460,33 @@ export default function Home() {
                     cursor: "pointer",
                     textAlign: "center",
                     transition: "all 0.2s ease",
+                    position: "relative",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
-                  <div style={{ fontWeight: "600" }}>{stadt.name}</div>
                   <div
-                    style={{ fontSize: "14px", opacity: 0.8, marginTop: "4px" }}
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      width: "80px",
+                      height: "80px",
+                      backgroundImage: `url(/emblems/${stadt.emblem}.svg)`,
+                      backgroundSize: "contain",
+                      backgroundRepeat: "no-repeat",
+                      backgroundPosition: "center",
+                      opacity: selectedCity === stadt.id ? 0.35 : 0.25,
+                      pointerEvents: "none",
+                    }}
+                  />
+                  <div style={{ fontWeight: "600", position: "relative" }}>{stadt.name}</div>
+                  <div
+                    style={{ fontSize: "14px", opacity: 0.8, marginTop: "4px", position: "relative" }}
                   >
                     {stadt.state}
                   </div>
@@ -638,7 +661,7 @@ export default function Home() {
               padding: "16px 40px",
             }}
           >
-            Beenden
+            Übersicht
           </button>
         </div>
       )}
