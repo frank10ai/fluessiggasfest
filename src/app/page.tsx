@@ -419,30 +419,57 @@ export default function Home() {
       {playerState === "idle" && (
         <>
           {/* Stadt-Auswahl */}
-          <div style={{ textAlign: "center" }}>
+          <div style={{ textAlign: "center", width: "100%", maxWidth: "1100px" }}>
             <label
-              htmlFor="city-select"
               style={{
                 display: "block",
                 fontSize: "20px",
-                marginBottom: "12px",
+                marginBottom: "16px",
                 color: "#666",
               }}
             >
               Ihre Stadt:
             </label>
-            <select
-              id="city-select"
-              className="simple-select"
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                gap: "12px",
+                padding: "4px",
+              }}
             >
               {STAEDTE.map((stadt) => (
-                <option key={stadt.id} value={stadt.id}>
-                  {stadt.name} ({stadt.state})
-                </option>
+                <button
+                  key={stadt.id}
+                  onClick={() => setSelectedCity(stadt.id)}
+                  aria-pressed={selectedCity === stadt.id}
+                  style={{
+                    width: "160px",
+                    padding: "16px 12px",
+                    fontSize: "18px",
+                    border:
+                      selectedCity === stadt.id
+                        ? "3px solid #2D5A7B"
+                        : "3px solid #E8E4DC",
+                    borderRadius: "12px",
+                    backgroundColor:
+                      selectedCity === stadt.id ? "#2D5A7B" : "white",
+                    color: selectedCity === stadt.id ? "white" : "#333",
+                    cursor: "pointer",
+                    textAlign: "center",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  <div style={{ fontWeight: "600" }}>{stadt.name}</div>
+                  <div
+                    style={{ fontSize: "14px", opacity: 0.8, marginTop: "4px" }}
+                  >
+                    {stadt.state}
+                  </div>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
           {/* Der Magic Button */}
