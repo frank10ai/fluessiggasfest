@@ -24,6 +24,131 @@ interface NewsItem {
 
 type PlayerState = "idle" | "loading" | "playing" | "paused";
 
+// Demo-Nachrichten für GitHub Pages (wo keine API verfügbar ist)
+const DEMO_NACHRICHTEN: NewsItem[] = [
+  {
+    headline: "Bundesregierung beschließt neue Maßnahmen",
+    summary:
+      "Die Bundesregierung hat heute in Berlin wichtige Beschlüsse gefasst. Die neuen Regelungen sollen das Leben der Bürgerinnen und Bürger verbessern und treten zum Jahreswechsel in Kraft.",
+    type: "welt",
+  },
+  {
+    headline: "Wirtschaft zeigt sich zuversichtlich",
+    summary:
+      "Deutsche Unternehmen blicken optimistisch in die Zukunft. Besonders der Mittelstand rechnet mit guten Geschäften im kommenden Jahr.",
+    type: "welt",
+  },
+  {
+    headline: "Kulturveranstaltungen ziehen Besucher an",
+    summary:
+      "Museen und Theater melden steigende Besucherzahlen. Die Menschen genießen wieder das gemeinsame Erleben von Kunst und Kultur.",
+    type: "welt",
+  },
+];
+
+// Lokale Nachrichten pro Stadt
+const LOKALE_NACHRICHTEN: Record<string, { headline: string; summary: string }> =
+  {
+    berlin: {
+      headline: "Neuer Spielplatz im Volkspark eröffnet",
+      summary:
+        "Die Stadt hat einen barrierefreien Spielplatz eingeweiht, der Kindern und Großeltern gemeinsames Spielen ermöglicht.",
+    },
+    hamburg: {
+      headline: "Ehrenamtliche Helfer räumen Elbstrand auf",
+      summary:
+        "Über zweihundert Freiwillige haben am Wochenende den Strand gereinigt. Die Aktion wird von vielen Bürgern gelobt.",
+    },
+    muenchen: {
+      headline: "Münchner Bäckerei verschenkt Brot an Bedürftige",
+      summary:
+        "Eine traditionelle Bäckerei in Schwabing gibt täglich Brot an Menschen weiter, die wenig Geld haben.",
+    },
+    koeln: {
+      headline: "Kölner Dom erhält neue Glocken",
+      summary:
+        "Nach aufwendiger Restaurierung läuten die historischen Glocken wieder in voller Pracht.",
+    },
+    frankfurt: {
+      headline: "Stadtbibliothek startet Vorlesestunden für Senioren",
+      summary:
+        "Jeden Donnerstag lesen junge Freiwillige älteren Menschen aus Büchern vor. Das Angebot ist kostenlos.",
+    },
+    stuttgart: {
+      headline: "Neuer Seniorentreff im Stadtteil eröffnet",
+      summary:
+        "Der gemütliche Treffpunkt bietet Kaffee, Kuchen und Gesellschaft für alle, die Gesellschaft suchen.",
+    },
+    duesseldorf: {
+      headline: "Nachbarschaftshilfe verbindet Jung und Alt",
+      summary:
+        "Ein neues Projekt bringt Schüler und Senioren zusammen. Sie helfen sich gegenseitig im Alltag.",
+    },
+    leipzig: {
+      headline: "Historischer Marktplatz erstrahlt in neuem Glanz",
+      summary:
+        "Nach der Renovierung lädt der Platz wieder zum Verweilen ein. Neue Bänke wurden aufgestellt.",
+    },
+    dortmund: {
+      headline: "Tierpark freut sich über Nachwuchs",
+      summary:
+        "Im städtischen Zoo sind zwei Rehkitze geboren worden. Besucher können sie ab nächster Woche sehen.",
+    },
+    dresden: {
+      headline: "Elbe-Radweg wird ausgebaut",
+      summary:
+        "Der beliebte Radweg bekommt neue Rastplätze mit Bänken und Trinkwasserbrunnen.",
+    },
+  };
+
+// Wetter-Daten
+const WETTER_DATEN: Record<string, { temp: string; beschreibung: string }> = {
+  berlin: { temp: "7", beschreibung: "bewölkt mit gelegentlichen Aufhellungen" },
+  hamburg: { temp: "9", beschreibung: "leichter Regen" },
+  muenchen: { temp: "4", beschreibung: "sonnig aber kühl" },
+  koeln: { temp: "10", beschreibung: "bedeckt" },
+  frankfurt: { temp: "8", beschreibung: "neblig am Morgen, später freundlich" },
+  stuttgart: { temp: "6", beschreibung: "wechselhaft" },
+  duesseldorf: { temp: "9", beschreibung: "leicht bewölkt" },
+  leipzig: { temp: "5", beschreibung: "trocken und kühl" },
+  dortmund: { temp: "8", beschreibung: "bedeckt" },
+  dresden: { temp: "4", beschreibung: "sonnig" },
+};
+
+const CITY_NAMES: Record<string, string> = {
+  berlin: "Berlin",
+  hamburg: "Hamburg",
+  muenchen: "München",
+  koeln: "Köln",
+  frankfurt: "Frankfurt",
+  stuttgart: "Stuttgart",
+  duesseldorf: "Düsseldorf",
+  leipzig: "Leipzig",
+  dortmund: "Dortmund",
+  dresden: "Dresden",
+};
+
+// Generiere Demo-Nachrichten für eine Stadt
+function getDemoNews(city: string): NewsItem[] {
+  const lokal = LOKALE_NACHRICHTEN[city] || LOKALE_NACHRICHTEN["berlin"];
+  const wetter = WETTER_DATEN[city] || WETTER_DATEN["berlin"];
+  const cityName = CITY_NAMES[city] || city;
+
+  return [
+    ...DEMO_NACHRICHTEN,
+    {
+      headline: lokal.headline,
+      summary: lokal.summary,
+      type: "lokal" as const,
+    },
+    {
+      headline: `Das Wetter in ${cityName}`,
+      summary: `Heute erwarten wir ${wetter.beschreibung}. Die Temperaturen liegen bei ${wetter.temp} Grad. Denken Sie an warme Kleidung, wenn Sie das Haus verlassen.`,
+      type: "wetter" as const,
+    },
+  ];
+}
+
 export default function Home() {
   const [playerState, setPlayerState] = useState<PlayerState>("idle");
   const [selectedCity, setSelectedCity] = useState("berlin");
@@ -38,9 +163,11 @@ export default function Home() {
   const getGermanVoice = useCallback(() => {
     const voices = window.speechSynthesis.getVoices();
     // Priorität: Deutsche Stimme mit "female" oder "male" im Namen für natürlicheren Klang
-    const germanVoice = voices.find(
-      (v) => v.lang.startsWith("de") && v.name.toLowerCase().includes("female")
-    ) ||
+    const germanVoice =
+      voices.find(
+        (v) =>
+          v.lang.startsWith("de") && v.name.toLowerCase().includes("female")
+      ) ||
       voices.find(
         (v) => v.lang.startsWith("de") && v.name.toLowerCase().includes("male")
       ) ||
@@ -130,9 +257,10 @@ export default function Home() {
     setCurrentNewsIndex(0);
 
     try {
+      // Versuche zuerst die API zu erreichen
       const response = await fetch(`/api/news?city=${selectedCity}`);
       if (!response.ok) {
-        throw new Error("Nachrichten konnten nicht geladen werden");
+        throw new Error("API nicht erreichbar");
       }
 
       const data = await response.json();
@@ -140,10 +268,12 @@ export default function Home() {
       setPlayerState("playing");
       speakNews(data.news[0], 0, data.news);
     } catch {
-      setError(
-        "Die Nachrichten konnten leider nicht geladen werden. Bitte versuchen Sie es später erneut."
-      );
-      setPlayerState("idle");
+      // Fallback auf Demo-Daten (z.B. auf GitHub Pages)
+      console.log("API nicht verfügbar, verwende Demo-Daten");
+      const demoNews = getDemoNews(selectedCity);
+      setNews(demoNews);
+      setPlayerState("playing");
+      speakNews(demoNews[0], 0, demoNews);
     }
   };
 
@@ -288,11 +418,7 @@ export default function Home() {
       )}
 
       {playerState === "loading" && (
-        <div
-          style={{ textAlign: "center" }}
-          role="status"
-          aria-live="polite"
-        >
+        <div style={{ textAlign: "center" }} role="status" aria-live="polite">
           <div
             className="loading"
             style={{
