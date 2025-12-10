@@ -333,14 +333,18 @@ export default function Home() {
       <header style={{ textAlign: "center", marginBottom: "20px" }}>
         <h1
           style={{
-            fontSize: "clamp(36px, 8vw, 56px)",
+            fontSize: "clamp(32px, 6vw, 48px)",
             fontWeight: 700,
             color: "var(--primary)",
             margin: 0,
             lineHeight: 1.2,
           }}
         >
-          Nachrichten
+          Deine Nachrichten vom{" "}
+          {new Date().toLocaleDateString("de-DE", {
+            day: "numeric",
+            month: "long",
+          })}
         </h1>
         <p
           style={{
@@ -350,7 +354,7 @@ export default function Home() {
             fontWeight: 300,
           }}
         >
-          Einfach zuhören
+          Einfach anhören und entspannen
         </p>
       </header>
 
